@@ -25,9 +25,9 @@ public:
 };
 
 class shop {
-	char name[SHOP_NAME_SIZE] = "0";
+	char name[SHOP_NAME_SIZE];
 	item items[SHOP_ITEMS_COUNT];
-	int items_counter = 0;
+	int items_counter;
 public:
 	shop();
 	shop(char new_name[], item new_item);
@@ -39,7 +39,6 @@ public:
 	void delete_item(int item_number);
 	int get_items_counter();
 	void print();
-	void add_item();
 	void delete_item();
 };
 
@@ -67,6 +66,14 @@ class sale {
 	char text[SALE_TEXT_LENGTH] = "0";
 	int items_counter = 0;
 };
+
+void itemcpy(item destination, item source) {
+	char source_name;
+	source.get_name(&source_name);
+	destination.set_name(&source_name);
+	destination.set_discount(source.get_discount());
+	destination.set_price(source.get_price());
+}
 
 item::item() {
 	strcpy(name, "0");
@@ -110,4 +117,62 @@ void item::set_discount(int new_discount) {
 
 void item::print() {
 	printf("%s товар %d цена %d скидка",item::name, item::price, item::discount);
+}
+
+shop::shop() {
+	strcpy(name, "0");
+	items_counter = 0;
+}
+
+void shop::add_item(item new_item) {
+	char new_name[ITEM_NAME_SIZE];
+	new_item.get_name(new_name);
+	shop::items[shop::items_counter].set_name(new_name);
+	shop::items[shop::items_counter].set_price(new_item.get_price());
+	shop::items[shop::items_counter].set_discount(new_item.get_discount());
+	shop::items_counter++;
+}
+
+shop::shop(char new_name[], item new_item) {
+	items_counter = 0;
+	strcpy(name, new_name);
+	add_item(new_item);
+}
+
+shop::shop(char new_name[]) {
+	items_counter = 0;
+	strcpy(name, new_name);
+}
+
+void shop::get_name(char buffer[]) {
+	strcpy(buffer, name);
+}
+
+void shop::set_name(char new_name[]) {
+	strcpy(name, new_name);
+}
+
+void shop::get_items(item buffer[]) {
+	for (int i = 0; i < items_counter; i++) {
+		itemcpy(buffer[i], items[i]);
+	}
+}
+
+void shop::delete_item(int item_number) {
+	char null_name = '0';
+	shop::items[item_number].set_name(&null_name);
+	shop::items[item_number].set_price(0);
+	shop::items[item_number].set_discount(0);
+	items_counter--;
+}
+
+int shop::get_items_counter() {
+	return items_counter;
+}
+
+void shop::print() {
+	puts(name);
+	for (int i = 0; i < items_counter; i++) {
+		shop::items[i].print();
+	}
 }

@@ -9,5 +9,6 @@ int main()
     char new_name[30];
     strcpy(new_name, "penis");
     item bebra(new_name);
+    shop eshkere;
     bebra.print();
 }
