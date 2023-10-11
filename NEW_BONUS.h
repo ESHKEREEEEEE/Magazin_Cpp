@@ -39,7 +39,6 @@ public:
 	void delete_item(int item_number);
 	int get_items_counter();
 	void print();
-	void delete_item();
 };
 
 class promocode {
@@ -50,21 +49,70 @@ class promocode {
 			int day = 0;
 			int month = 0;
 			int year = 0;
+		public:
+			date();
+			date(int day);
+			date(int day, int month, int year);
+			int get_day();
+			int get_month();
+			int get_year();
+			void set_day(int new_day);
+			void set_month(int new_month);
+			void set_year(int new_year);
 		};
 		class timer {
 			int second = 0;
 			int minute = 0;
 			int hour = 0;
+		public:
+			timer();
+			timer(int second);
+			timer(int second, int minute, int hour);
+			int get_day();
+			int get_month();
+			int get_year();
+			void set_day(int new_second);
+			void set_month(int new_minute);
+			void set_year(int new_hour);
 		};
+	public:
+		expire();
+		expire(date new_date, timer new_timer);
 	};
 	int items_counter = 0;
 	int discount = 0;
+public:
+	promocode();
+	promocode(char new_code[]);
+	promocode(item new_items[], char new_code[], expire new_expire, int new_discount);
+	void get_code(char buffer[]);
+	void set_code(char new_code[]);
+	void get_items(item buffer[]);
+	void add_item(item new_item);
+	void delete_item(int item_number);
+	int get_discount();
+	void set_discount(int new_discount);
+	int get_items_counter();
+	void get_expire(expire buffer);
+	void set_expire(expire new_expire);
+	void print();
 };
 
 class sale {
 	item items[SALE_ITEMS_COUNT];
 	char text[SALE_TEXT_LENGTH] = "0";
 	int items_counter = 0;
+public:
+	sale();
+	sale(char new_text[], item new_item);
+	sale(char new_text[]);
+	void get_text(char buffer[]);
+	void set_text(char new_name[]);
+	void get_items(item buffer[]);
+	void add_item(item new_item);
+	void delete_item(int item_number);
+	int get_items_counter();
+	void print();
 };
 
 void itemcpy(item destination, item source) {
