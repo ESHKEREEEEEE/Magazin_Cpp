@@ -41,29 +41,6 @@ public:
 	void print();
 };
 
-class promocode {
-	item items[PROMOCODE_ITEM_SIZE];
-	char code[CODE_SIZE];
-	expire this_expire;
-	int items_counter;
-	int discount;
-public:
-	promocode();
-	promocode(char new_code[]);
-	promocode(item new_items[], int new_items_counter, char new_code[], expire new_expire, int new_discount);
-	void get_code(char buffer[]);
-	void set_code(char new_code[]);
-	void get_items(item buffer[]);
-	void add_item(item new_item);
-	void delete_item(int item_number);
-	int get_discount();
-	void set_discount(int new_discount);
-	int get_items_counter();
-	void get_expire(expire buffer);
-	void set_expire(expire new_expire);
-	void print();
-};
-
 class expire {
 	int day;
 	int month;
@@ -90,6 +67,29 @@ public:
 	void print();
 };
 
+class promocode {
+	item items[PROMOCODE_ITEM_SIZE];
+	char code[CODE_SIZE];
+	expire this_expire;
+	int items_counter;
+	int discount;
+public:
+	promocode();
+	promocode(char new_code[]);
+	promocode(item new_items[], int new_items_counter, char new_code[], expire new_expire, int new_discount);
+	void get_code(char buffer[]);
+	void set_code(char new_code[]);
+	void get_items(item buffer[]);
+	void add_item(item new_item);
+	void delete_item(int item_number);
+	int get_discount();
+	void set_discount(int new_discount);
+	int get_items_counter();
+	void get_expire(expire buffer);
+	void set_expire(expire new_expire);
+	void print();
+};
+
 class sale {
 	item items[SALE_ITEMS_COUNT];
 	char text[SALE_TEXT_LENGTH];
@@ -108,9 +108,9 @@ public:
 };
 
 void itemcpy(item destination, item source) {
-	char source_name;
-	source.get_name(&source_name);
-	destination.set_name(&source_name);
+	char source_name[ITEM_NAME_SIZE];
+	source.get_name(source_name);
+	destination.set_name(source_name);
 	destination.set_discount(source.get_discount());
 	destination.set_price(source.get_price());
 }
@@ -158,7 +158,7 @@ void item::set_discount(int new_discount) {
 }
 
 void item::print() {
-	printf("%s товар %d цена %d скидка",item::name, item::price, item::discount);
+	printf("%s товар %d цена %d скидка\n",item::name, item::price, item::discount);
 }
 
 shop::shop() {
@@ -295,7 +295,7 @@ void expire::set_hour(int new_hour) {
 }
 
 void expire::print() {
-	printf("%d/%d/%d %d:%d:%d", day, month, year, second, minute, hour);
+	printf("%d/%d/%d %d:%d:%d\n", day, month, year, second, minute, hour);
 }
 
 //ghfhfgd

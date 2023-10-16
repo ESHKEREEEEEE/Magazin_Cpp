@@ -1,14 +1,94 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include "NEW_BONUS.h"
-
+#define SHOP_COUNT 30
+#define SALE_COUNT 30
+#define NAME_SIZE 30
+#define TEXT_SIZE 30
+#define ITEMS_COUNT 30
+#define PROMOCODE_COUNT 30
 
 int main()
 {
     setlocale(LC_ALL, "Rus");
-    char new_name[30];
-    strcpy(new_name, "penis");
-    item bebra(new_name);
-    shop eshkere;
-    bebra.print();
+    promocode promocodes[PROMOCODE_COUNT];
+    //тест методов item
+    char name_for_item[NAME_SIZE];
+    strcpy(name_for_item, "name");
+    item new_item(name_for_item, 100, 0);
+    new_item.print();
+    char new_name[NAME_SIZE];
+    strcpy(new_name, "new name");
+    new_item.set_name(new_name);
+    new_item.set_price(228);
+    new_item.set_discount(3);
+    char buffer[NAME_SIZE];
+    new_item.get_name(buffer);
+    puts(buffer);
+    printf("%d %d", new_item.get_price(), new_item.get_discount());
+
+    //тест методов shop
+    shop new_shop;
+    char name_for_shop[NAME_SIZE];
+    strcpy(name_for_shop, "name");
+    new_shop.add_item(new_item);
+    new_shop.set_name(name_for_shop);
+    new_shop.print();
+    item items_buffer[ITEMS_COUNT];
+    char char_buffer[NAME_SIZE];
+    new_shop.get_items(items_buffer);
+    for (int i = 0; i < new_shop.get_items_counter(); i++) {
+        items_buffer[i].print();
+    }
+    new_shop.delete_item(0);
+    new_shop.get_name(char_buffer);
+    puts(char_buffer);
+    new_shop.print();
+
+    //тест методов sale
+    char text_for_sale[TEXT_SIZE];
+    strcpy(text_for_sale, "эх акция, акция\n");
+    sale new_sale(text_for_sale);
+    new_sale.get_text(char_buffer);
+    puts(char_buffer);
+    new_sale.add_item(new_item);
+    new_sale.get_items(items_buffer);
+    for (int i = 0; i < new_sale.get_items_counter(); i++) {
+        items_buffer[i].print();
+    }
+    strcpy(char_buffer, "эщкере\n");
+    new_sale.set_text(char_buffer);
+    new_sale.delete_item(0);
+    new_sale.print();
+
+    //тест методов expire
+    expire new_expire(16, 12, 2003, 22, 21, 20);
+    printf("%d/%d/%d %d:%d:%d\n", new_expire.get_day(), new_expire.get_month(), new_expire.get_year(), new_expire.get_hour(), new_expire.get_minute(), new_expire.get_second());
+    new_expire.set_day(10);
+    new_expire.set_month(11);
+    new_expire.set_year(12);
+    new_expire.set_hour(13);
+    new_expire.set_minute(14);
+    new_expire.set_second(15);
+    new_expire.print();
+
+    //тест методов promocode
+    promocode new_promocode;
+    expire expire_buffer;
+    char code_for_promocode[CODE_SIZE];
+    strcpy(code_for_promocode, "mishkafreddy\n");
+    new_promocode.set_code(code_for_promocode);
+    new_promocode.get_code(char_buffer);
+    puts(char_buffer);
+    new_promocode.add_item(new_item);
+    new_promocode.get_items(items_buffer);
+    for (int i = 0; i < new_promocode.get_items_counter(); i++) {
+        items_buffer[i].print();
+    }
+    new_promocode.set_discount(10);
+    printf("%d\n", new_promocode.get_discount());
+    new_promocode.set_expire(new_expire);
+    new_promocode.get_expire(expire_buffer);
+    new_promocode.delete_item(0);
+    new_promocode.print();
 }
