@@ -13,18 +13,16 @@ int main()
     setlocale(LC_ALL, "Rus");
     promocode promocodes[PROMOCODE_COUNT];
     //тест методов item
-    char name_for_item[NAME_SIZE];
-    strcpy(name_for_item, "name");
+    std::string name_for_item = "name";
     item new_item(name_for_item, 100, 0);
     new_item.print();
-    char new_name[NAME_SIZE];
-    strcpy(new_name, "new name");
+    std::string new_name = "new_name";
     new_item.set_name(new_name);
     new_item.set_price(228);
     new_item.set_discount(3);
-    char buffer[NAME_SIZE];
+    std::string buffer;
     new_item.get_name(buffer);
-    puts(buffer);
+    std::cout << buffer;
     printf("%d %d", new_item.get_price(), new_item.get_discount());
 
     //тест методов shop
