@@ -1,4 +1,6 @@
 #pragma once
+#include <iostream>
+#include <string>
 #define SHOP_NAME_SIZE 20
 #define ITEM_NAME_SIZE 30
 #define CODE_SIZE 30
@@ -92,14 +94,14 @@ public:
 
 class sale {
 	item items[SALE_ITEMS_COUNT];
-	char text[SALE_TEXT_LENGTH];
+	std::string text;
 	int items_counter;
 public:
 	sale();
-	sale(char new_text[], item new_items[]);
-	sale(char new_text[]);
-	void get_text(char buffer[]);
-	void set_text(char new_text[]);
+	sale(std::string new_text, item new_items[]);
+	sale(std::string new_text);
+	void get_text(std::string *buffer);
+	void set_text(std::string new_text);
 	void get_items(item buffer[]);
 	void add_item(item new_item);
 	void delete_item(int item_number);
@@ -406,29 +408,29 @@ void sale::add_item(item new_item) {
 }
 
 sale::sale() {
-	strcpy(text, "0");
+	text = "0";
 	items_counter = 0;
 }
 
-sale::sale(char new_text[], item new_items[]) {
+sale::sale(std::string new_text, item new_items[]) {
 	items_counter = 0;
-	strcpy(text, "0");
+	this->text = new_text;
 	for (int i = 0; i < items_counter; i++) {
 		add_item(new_items[i]);
 	}
 }
 
-sale::sale(char new_text[]) {
-	strcpy(text, new_text);
+sale::sale(std::string new_text) {
+	this->text = new_text;
 	items_counter = 0;
 }
 
-void sale::get_text(char buffer[]) {
-	strcpy(buffer, text);
+void sale::get_text(std::string *buffer) {
+	*(buffer) = this->text;
 }
 
-void sale::set_text(char new_text[]) {
-	strcpy(text, new_text);
+void sale::set_text(std::string new_text) {
+	this->text = new_text;
 }
 
 void sale::get_items(item buffer[]) {
@@ -450,7 +452,7 @@ int sale::get_items_counter() {
 }
 
 void sale::print() {
-	puts(text);
+	std::cout << text;
 	for (int i = 0; i < items_counter; i++) {
 		items[i].print();
 	}

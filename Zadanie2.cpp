@@ -46,18 +46,18 @@ int main()
     new_shop.print();
 
     //тест методов sale
-    char text_for_sale[TEXT_SIZE];
-    strcpy(text_for_sale, "эх акция, акция\n");
+    std::string text_for_sale = "эх акция, акция\n";
+    std::string string_buffer;
     sale new_sale(text_for_sale);
-    new_sale.get_text(char_buffer);
-    puts(char_buffer);
+    new_sale.get_text(&string_buffer);
+    std::cout << string_buffer;
     new_sale.add_item(new_item);
     new_sale.get_items(items_buffer);
     for (int i = 0; i < new_sale.get_items_counter(); i++) {
         items_buffer[i].print();
     }
-    strcpy(char_buffer, "эщкере\n");
-    new_sale.set_text(char_buffer);
+    string_buffer = "эщкере\n";
+    new_sale.set_text(string_buffer);
     new_sale.delete_item(0);
     new_sale.print();
 
