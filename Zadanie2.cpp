@@ -21,21 +21,18 @@ int main()
     new_item.set_name(new_name);
     new_item.set_price(228);
     new_item.set_discount(3);
-    std::string buffer;
-    std::string *pbuffer = &buffer;
-    new_item.get_name(pbuffer);
-    std::cout << *pbuffer;
+    std::string string_buffer;
+    new_item.get_name(&string_buffer);
+    std::cout << string_buffer;
     printf(" %d %d \n", new_item.get_price(), new_item.get_discount());
 
     //тест методов shop
     shop new_shop;
-    char name_for_shop[NAME_SIZE];
-    strcpy(name_for_shop, "name");
+    std::string name_for_shop = "name";
     new_shop.add_item(new_item);
     new_shop.set_name(name_for_shop);
     new_shop.print();
     item items_buffer[ITEMS_COUNT];
-    std::string string_buffer;
     new_shop.get_items(items_buffer);
     for (int i = 0; i < new_shop.get_items_counter(); i++) {
         items_buffer[i].print();

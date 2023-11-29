@@ -10,9 +10,11 @@
 #define PROMOCODE_ITEM_SIZE 30
 
 class item {
+	static int total_items_count;
 	std::string name;
 	int price = 0;
 	int discount = 0;
+	friend void item_deleted();
 public:
 	item();
 	item(std::string new_name, int new_price, int new_discount);
@@ -25,6 +27,8 @@ public:
 	void set_discount(int new_discount);
 	void print();
 };
+
+int item::total_items_count;
 
 class shop {
 	std::string name;
@@ -117,6 +121,10 @@ void itemcpy(item destination, item source) {
 	destination.set_price(source.get_price());
 }
 
+void item_deleted() {
+	item::total_items_count--;
+}
+
 item::item() {
 	this->name = "0";
 	price = 0;
@@ -127,12 +135,14 @@ item::item(std::string name, int price, int discount) {
 	this->name = name;
 	this->price = price;
 	this->discount = discount;
+	if (this->name != "0") { total_items_count++; }
 }
 
 item::item(std::string name) {
 	this->name = name;
 	price = 0;
 	discount = 0;
+	if (this->name != "0") { total_items_count++; }
 }
 
 void item::get_name(std::string *buffer) {
@@ -140,6 +150,7 @@ void item::get_name(std::string *buffer) {
 }
 
 void item::set_name(std::string name) {
+	if (this->name == "0" && name != "0") { total_items_count++; }
 	this->name = name;
 }
 
@@ -160,7 +171,7 @@ void item::set_discount(int new_discount) {
 }
 
 void item::print() {
-	std::cout << item::name << " товар " << item::price << " цена " << item::discount << " скидка\n";
+	std::cout << item::name << " товар " << item::price << " цена " << item::discount << " скидка " << item::total_items_count << " всего товаров\n";
 }
 
 shop::shop() {
@@ -207,6 +218,7 @@ void shop::delete_item(int item_number) {
 	shop::items[item_number].set_price(0);
 	shop::items[item_number].set_discount(0);
 	items_counter--;
+	item_deleted();
 }
 
 int shop::get_items_counter() {
@@ -361,6 +373,7 @@ void promocode::delete_item(int item_number) {
 	promocode::items[item_number].set_price(0);
 	promocode::items[item_number].set_discount(0);
 	items_counter--;
+	item_deleted();
 }
 
 int promocode::get_discount() {
@@ -440,6 +453,7 @@ void sale::delete_item(int item_number) {
 	sale::items[item_number].set_price(0);
 	sale::items[item_number].set_discount(0);
 	items_counter--;
+	item_deleted();
 }
 
 int sale::get_items_counter() {
