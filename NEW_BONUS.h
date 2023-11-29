@@ -17,7 +17,7 @@ public:
 	item();
 	item(std::string new_name, int new_price, int new_discount);
 	item(std::string new_name);
-	void get_name(std::string buffer);
+	void get_name(std::string *buffer);
 	void set_name(std::string new_name);
 	int get_price();
 	void set_price(int new_price);
@@ -34,7 +34,7 @@ public:
 	shop();
 	shop(std::string new_name, item new_item);
 	shop(std::string new_name);
-	void get_name(std::string buffer);
+	void get_name(std::string *buffer);
 	void set_name(std::string new_name);
 	void get_items(item buffer[]);
 	void add_item(item new_item);
@@ -79,7 +79,7 @@ public:
 	promocode();
 	promocode(std::string new_code);
 	promocode(item new_items[], int new_items_counter, std::string new_code, expire new_expire, int new_discount);
-	void get_code(std::string buffer);
+	void get_code(std::string *buffer);
 	void set_code(std::string new_code);
 	void get_items(item buffer[]);
 	void add_item(item new_item);
@@ -111,7 +111,7 @@ public:
 
 void itemcpy(item destination, item source) {
 	std::string source_name;
-	source.get_name(source_name);
+	source.get_name(&source_name);
 	destination.set_name(source_name);
 	destination.set_discount(source.get_discount());
 	destination.set_price(source.get_price());
@@ -123,24 +123,24 @@ item::item() {
 	discount = 0;
 }
 
-item::item(std::string new_name, int new_price, int new_discount) {
-	this->name = new_name;
-	price = new_price;
-	discount = new_discount;
+item::item(std::string name, int price, int discount) {
+	this->name = name;
+	this->price = price;
+	this->discount = discount;
 }
 
-item::item(std::string new_name) {
-	this->name = new_name;
+item::item(std::string name) {
+	this->name = name;
 	price = 0;
 	discount = 0;
 }
 
-void item::get_name(std::string buffer) {
-	buffer = this->name;
+void item::get_name(std::string *buffer) {
+	*(buffer) = this->name;
 }
 
-void item::set_name(std::string new_name) {
-	this->name = new_name;
+void item::set_name(std::string name) {
+	this->name = name;
 }
 
 int item::get_price(){
@@ -160,7 +160,7 @@ void item::set_discount(int new_discount) {
 }
 
 void item::print() {
-	printf("%s товар %d цена %d скидка\n",item::name, item::price, item::discount);
+	std::cout << item::name << " товар " << item::price << " цена " << item::discount << " скидка\n";
 }
 
 shop::shop() {
@@ -170,16 +170,16 @@ shop::shop() {
 
 void shop::add_item(item new_item) {
 	std::string new_name;
-	new_item.get_name(new_name);
+	new_item.get_name(&new_name);
 	shop::items[shop::items_counter].set_name(new_name);
 	shop::items[shop::items_counter].set_price(new_item.get_price());
 	shop::items[shop::items_counter].set_discount(new_item.get_discount());
 	shop::items_counter++;
 }
 
-shop::shop(std::string new_name, item new_item) {
+shop::shop(std::string name, item new_item) {
 	items_counter = 0;
-	this->name = new_name;
+	this->name = name;
 	add_item(new_item);
 }
 
@@ -188,12 +188,12 @@ shop::shop(std::string new_name) {
 	this->name = new_name;
 }
 
-void shop::get_name(std::string buffer) {
-	buffer = this->name;
+void shop::get_name(std::string *buffer) {
+	*(buffer) = this->name;
 }
 
-void shop::set_name(std::string new_name) {
-	this->name = new_name;
+void shop::set_name(std::string name) {
+	this->name = name;
 }
 
 void shop::get_items(item buffer[]) {
@@ -214,7 +214,7 @@ int shop::get_items_counter() {
 }
 
 void shop::print() {
-	std::cout << this->name;
+	std::cout << this->name << "\n";
 	for (int i = 0; i < items_counter; i++) {
 		shop::items[i].print();
 	}
@@ -299,7 +299,6 @@ void expire::print() {
 	printf("%d/%d/%d %d:%d:%d\n", day, month, year, second, minute, hour);
 }
 
-//ghfhfgd
 void promocode::set_discount(int new_discount) {
 	promocode::discount = new_discount;
 }
@@ -307,7 +306,6 @@ void promocode::set_discount(int new_discount) {
 int promocode::get_items_counter() {
 	return promocode::items_counter;
 }
-//vghdhhhxtbj
 
 promocode::promocode() {
 	this->code = "0";
@@ -315,26 +313,26 @@ promocode::promocode() {
 	discount = 0;
 }
 
-promocode::promocode(std::string new_code) {
-	this->code = new_code;
+promocode::promocode(std::string code) {
+	this->code = code;
 	items_counter = 0;
 	discount = 0;
 }
 
 void promocode::add_item(item new_item) {
 	std::string new_name;
-	new_item.get_name(new_name);
+	new_item.get_name(&new_name);
 	promocode::items[promocode::items_counter].set_name(new_name);
 	promocode::items[promocode::items_counter].set_price(new_item.get_price());
 	promocode::items[promocode::items_counter].set_discount(new_item.get_discount());
 	promocode::items_counter++;
 }
 
-promocode::promocode(item new_items[], int new_items_counter, std::string new_code, expire new_expire, int new_discount) {
+promocode::promocode(item new_items[], int new_items_counter, std::string code, expire new_expire, int new_discount) {
 	for (int i = 0; i < new_items_counter; i++) {
 		promocode::add_item(new_items[i]);
 	}
-	this->code = new_code;
+	this->code = code;
 	this_expire.set_day(new_expire.get_day());
 	this_expire.set_month(new_expire.get_month());
 	this_expire.set_year(new_expire.get_year());
@@ -344,12 +342,12 @@ promocode::promocode(item new_items[], int new_items_counter, std::string new_co
 	discount = new_discount;
 }
 
-void promocode::get_code(std::string buffer) {
-	buffer = this->code;
+void promocode::get_code(std::string *buffer) {
+	*(buffer) = this->code;
 }
 
-void promocode::set_code(std::string new_code) {
-	this->code = new_code;
+void promocode::set_code(std::string code) {
+	this->code = code;
 }
 
 void promocode::get_items(item buffer[]) {
@@ -398,7 +396,7 @@ void promocode::print() {
 
 void sale::add_item(item new_item) {
 	std::string new_name;
-	new_item.get_name(new_name);
+	new_item.get_name(&new_name);
 	sale::items[sale::items_counter].set_name(new_name);
 	sale::items[sale::items_counter].set_price(new_item.get_price());
 	sale::items[sale::items_counter].set_discount(new_item.get_discount());
@@ -410,16 +408,16 @@ sale::sale() {
 	items_counter = 0;
 }
 
-sale::sale(std::string new_text, item new_items[]) {
+sale::sale(std::string text, item new_items[]) {
 	items_counter = 0;
-	this->text = new_text;
+	this->text = text;
 	for (int i = 0; i < items_counter; i++) {
 		add_item(new_items[i]);
 	}
 }
 
-sale::sale(std::string new_text) {
-	this->text = new_text;
+sale::sale(std::string text) {
+	this->text = text;
 	items_counter = 0;
 }
 
@@ -427,8 +425,8 @@ void sale::get_text(std::string *buffer) {
 	*(buffer) = this->text;
 }
 
-void sale::set_text(std::string new_text) {
-	this->text = new_text;
+void sale::set_text(std::string text) {
+	this->text = text;
 }
 
 void sale::get_items(item buffer[]) {

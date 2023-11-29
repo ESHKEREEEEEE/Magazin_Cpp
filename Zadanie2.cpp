@@ -12,6 +12,7 @@ int main()
 {
     setlocale(LC_ALL, "Rus");
     promocode promocodes[PROMOCODE_COUNT];
+
     //тест методов item
     std::string name_for_item = "name";
     item new_item(name_for_item, 100, 0);
@@ -21,9 +22,10 @@ int main()
     new_item.set_price(228);
     new_item.set_discount(3);
     std::string buffer;
-    new_item.get_name(buffer);
-    std::cout << buffer;
-    printf("%d %d", new_item.get_price(), new_item.get_discount());
+    std::string *pbuffer = &buffer;
+    new_item.get_name(pbuffer);
+    std::cout << *pbuffer;
+    printf(" %d %d \n", new_item.get_price(), new_item.get_discount());
 
     //тест методов shop
     shop new_shop;
@@ -33,19 +35,18 @@ int main()
     new_shop.set_name(name_for_shop);
     new_shop.print();
     item items_buffer[ITEMS_COUNT];
-    char char_buffer[NAME_SIZE];
+    std::string string_buffer;
     new_shop.get_items(items_buffer);
     for (int i = 0; i < new_shop.get_items_counter(); i++) {
         items_buffer[i].print();
     }
     new_shop.delete_item(0);
-    new_shop.get_name(char_buffer);
-    puts(char_buffer);
+    new_shop.get_name(&string_buffer);
+    std::cout << string_buffer << "\n";
     new_shop.print();
 
     //тест методов sale
     std::string text_for_sale = "эх акция, акция\n";
-    std::string string_buffer;
     sale new_sale(text_for_sale);
     new_sale.get_text(&string_buffer);
     std::cout << string_buffer;
@@ -73,11 +74,10 @@ int main()
     //тест методов promocode
     promocode new_promocode;
     expire expire_buffer;
-    char code_for_promocode[CODE_SIZE];
-    strcpy(code_for_promocode, "mishkafreddy\n");
+    std::string code_for_promocode = "mishkafreddy\n";
     new_promocode.set_code(code_for_promocode);
-    new_promocode.get_code(char_buffer);
-    puts(char_buffer);
+    new_promocode.get_code(&string_buffer);
+    std::cout << string_buffer;
     new_promocode.add_item(new_item);
     new_promocode.get_items(items_buffer);
     for (int i = 0; i < new_promocode.get_items_counter(); i++) {
