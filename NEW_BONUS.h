@@ -22,6 +22,8 @@ public:
 	void get_name(std::string *buffer);
 	void set_name(std::string new_name);
 	int get_price();
+	int* get_price_p();
+	int& get_price_s();
 	void set_price(int new_price);
 	int get_discount();
 	void set_discount(int new_discount);
@@ -45,7 +47,10 @@ public:
 	void delete_item(int item_number);
 	int get_items_counter();
 	void print();
+	shop operator+ (shop& other);
+	
 };
+
 
 class expire {
 	int day;
@@ -71,6 +76,8 @@ public:
 	void set_minute(int new_minute);
 	void set_hour(int new_hour);
 	void print();
+	expire& operator++();
+	expire operator++(int);
 };
 
 class promocode {
@@ -125,6 +132,35 @@ void item_deleted() {
 	item::total_items_count--;
 }
 
+
+shop shop::operator+(shop& other) {
+	shop new_shop;
+	std::string buffer1;
+	std::string buffer2;
+	this->get_name(&buffer1);
+	other.get_name(&buffer2);
+	std::string new_name = buffer1 + buffer2;
+	new_shop.set_name(new_name);
+	for (int i = 0; i < this->items_counter; i++) {
+		new_shop.add_item(this->items[i]);
+	}
+	for (int i = 0; i < other.items_counter; i++) {
+		new_shop.add_item(other.items[i]);
+	}
+	return new_shop;
+}
+
+expire& expire::operator++() {
+	second++;
+	return *this;
+}
+
+expire expire::operator++(int) {
+	expire temp = *this;
+	++*this;
+	return temp;
+}
+
 item::item() {
 	this->name = "0";
 	price = 0;
@@ -156,6 +192,15 @@ void item::set_name(std::string name) {
 
 int item::get_price(){
 	return item::price;
+}
+
+int* item::get_price_p() {
+	int* p = &this->price;
+	return p;
+}
+
+int& item::get_price_s() {
+	return  this->price;
 }
 
 void item::set_price(int new_price) {
@@ -308,7 +353,7 @@ void expire::set_hour(int new_hour) {
 }
 
 void expire::print() {
-	printf("%d/%d/%d %d:%d:%d\n", day, month, year, second, minute, hour);
+	printf("%d/%d/%d %d:%d:%d\n", day, month, year, hour, minute, second);
 }
 
 void promocode::set_discount(int new_discount) {

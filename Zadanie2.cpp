@@ -86,4 +86,21 @@ int main()
     new_promocode.get_expire(expire_buffer);
     new_promocode.delete_item(0);
     new_promocode.print();
+
+    //тест перегрузки операторов
+    shop shop_to_plus;
+    item first_item("bebra", 10, 1);
+    item second_item("svo", 11, 2);
+    shop first_shop("\nPudge", first_item);
+    shop second_shop("Rudge", second_item);
+    shop_to_plus = first_shop + second_shop;
+    shop_to_plus.print();
+    new_expire.print();
+    new_expire++;
+    new_expire.print();
+    ++new_expire;
+    new_expire.print();
+    //тест передачи параметров по ссылке и через указатель
+    printf("%d\n", *first_item.get_price_p());
+    printf("%d\n", first_item.get_price_s());
 }
