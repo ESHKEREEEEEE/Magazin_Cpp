@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <stdexcept>
 #define SHOP_NAME_SIZE 20
 #define ITEM_NAME_SIZE 30
 #define CODE_SIZE 30
@@ -216,7 +217,8 @@ void item::set_discount(int new_discount) {
 }
 
 void item::print() {
-	std::cout << item::name << " товар " << item::price << " цена " << item::discount << " скидка " << item::total_items_count << " всего товаров\n";
+	if (this->name != "0") { std::cout << item::name << " товар " << item::price << " цена " << item::discount << " скидка " << item::total_items_count << " всего товаров\n"; }
+	else if (this->price != 0 and this->discount != 0) throw std::invalid_argument("NO ITEM NAME BUT PRICE AND DISCOUNT != 0");
 }
 
 shop::shop() {
@@ -293,6 +295,7 @@ expire::expire(int new_day) {
 	second = 0;
 	minute = 0;
 	hour = 0;
+	if (day < 0 or day > 31) { throw std::invalid_argument("Day needs to be less than 31 and more than 0"); }
 }
 
 expire::expire(int new_day, int new_month, int new_year, int new_second, int new_minute, int new_hour) {
@@ -302,6 +305,11 @@ expire::expire(int new_day, int new_month, int new_year, int new_second, int new
 	second = new_second;
 	minute = new_minute;
 	hour = new_hour;
+	if (day < 0 or day > 31) { throw std::invalid_argument("Day needs to be less than 31 and more than 0"); }
+	if (month < 0 or month > 12) { throw std::invalid_argument("Month needs to be less than 12 and more than 0"); }
+	if (second < 0 or second > 23) { throw std::invalid_argument("Hour needs to be less than 23 and more than 0"); }
+	if (minute < 0 or minute > 59) { throw std::invalid_argument("Minute needs to be less than 59 and more than 0"); }
+	if (hour < 0 or hour > 59) { throw std::invalid_argument("Second needs to be less than 59 and more than 0"); }
 }
 
 int expire::get_day() {
@@ -330,10 +338,12 @@ int expire::get_hour() {
 
 void expire::set_day(int new_day) {
 	day = new_day;
+	if (day < 0 or day > 31) { throw std::invalid_argument("Day needs to be less than 31 and more than 0"); }
 }
 
 void expire::set_month(int new_month) {
 	month = new_month;
+	if (month < 0 or month > 12) { throw std::invalid_argument("Month needs to be less than 12 and more than 0"); }
 }
 
 void expire::set_year(int new_year) {
@@ -342,14 +352,17 @@ void expire::set_year(int new_year) {
 
 void expire::set_second(int new_second) {
 	second = new_second;
+	if (second < 0 or second > 23) { throw std::invalid_argument("Hour needs to be less than 23 and more than 0"); }
 }
 
 void expire::set_minute(int new_minute) {
 	minute = new_minute;
+	if (minute < 0 or minute > 59) { throw std::invalid_argument("Minute needs to be less than 59 and more than 0"); }
 }
 
 void expire::set_hour(int new_hour) {
 	hour = new_hour;
+	if (hour < 0 or hour > 59) { throw std::invalid_argument("Second needs to be less than 59 and more than 0"); }
 }
 
 void expire::print() {
