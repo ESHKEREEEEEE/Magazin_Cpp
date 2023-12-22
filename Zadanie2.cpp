@@ -84,8 +84,8 @@ int main()
     }
     new_promocode.set_discount(10);
     printf("%d\n", new_promocode.get_discount());
-    new_promocode.set_expire(new_expire);
-    new_promocode.get_expire(expire_buffer);
+    //new_promocode.set_expire(new_expire);
+    //new_promocode.get_expire(expire_buffer);
     new_promocode.delete_item(0);
     new_promocode.print();
 
@@ -125,4 +125,5 @@ int main()
     }
     }
     catch (std::invalid_argument e) { std::cout << e.what();}
+    expiring_promocode()
 }
