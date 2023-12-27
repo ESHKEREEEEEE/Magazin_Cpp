@@ -9,6 +9,7 @@
 #define SALE_ITEMS_COUNT 30
 #define SALE_TEXT_LENGTH 100
 #define PROMOCODE_ITEM_SIZE 30
+#define generic <typename T>
 
 class item {
 	static int total_items_count;
@@ -29,7 +30,6 @@ public:
 	void set_discount(int new_discount);
 	void print();
 	friend std::ostream& operator<<(std::ostream& os, const item& it);
-	//item operator=(item it);
 protected:
 	int price = 0;
 };
@@ -52,7 +52,6 @@ public:
 	int get_items_counter();
 	void print();
 	shop operator+ (shop& other);
-	//shop operator=(shop sh);
 	friend std::ostream& operator<<(std::ostream& os, const shop& sh);
 };
 
@@ -82,7 +81,6 @@ public:
 	void print();
 	expire& operator++();
 	expire operator++(int);
-	//expire operator=(expire ex);
 	friend std::ostream& operator<<(std::ostream& os, const expire& ex);
 };
 
@@ -105,8 +103,6 @@ public:
 	void set_discount(int new_discount);
 	int get_items_counter();
 	void print();
-	//promocode operator=(promocode pr);
-	promocode operator=(expiring_promocode ex_pr);
 	friend std::ostream& operator<<(std::ostream& os, const promocode& pr);
 };
 
@@ -125,12 +121,14 @@ public:
 	void delete_item(int item_number);
 	int get_items_counter();
 	void print();
-	//sale operator=(sale sa);
 	friend std::ostream& operator<<(std::ostream& os, const sale& sa);
 };
 
-//производный класс + перегрузка метода базового класса
 class expiring_promocode : public promocode {
+	item items[PROMOCODE_ITEM_SIZE];
+	std::string code;
+	int items_counter;
+	int discount;
 	expire this_expire;
 public:
 	expiring_promocode();
@@ -144,40 +142,95 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const expiring_promocode& ex_pr);
 };
 
-//абстрактный класс + шаблон класса
 template <typename T>
 class person {
 	std::string name;
 	int age;
 	T id;
 public:
-	person(std::string name, int age, int id);
-	void get_name(std::string name_buffer);
-	void set_name(std::string new_name);
-	int get_age();
-	void set_age(int new_age);
-	int get_id();
-	void set_id(int new_id);
+	person(std::string name, int age, T id);
+	void get_name(std::string name_buffer) { name_buffer = name; }
+	void set_name(std::string new_name) { name = new_name; }
+	int get_age() { return age; }
+	void set_age(int new_age) { age = new_age; }
+	T get_id() { return id; }
+	void set_id(T new_id) { id = new_id; }
 	virtual void buy(item item_to_buy) = 0;
-	person operator=(person pe);
-	friend std::ostream& operator<<(std::ostream& os, const person& pe);
 };
 
 template <typename T>
+person<T>::person(std::string name, int age, T id) {
+	this->name = name; this->age = age; this->id = id;
+}
+
+template <typename T>
 class customer : public person<T> {
+	std::string name;
+	int age;
+	T id;
 	int money;
 public:
-	customer(std::string name, int age, int id, int money); //вызвать базовый конструктор
-	int get_money();
-	void set_money(int new_money);
-	void buy();
-	customer operator=(customer cu);
+	customer(std::string name, int age, T id, int money) : person(name, age, id) { this->money = money; };
+	int get_money() { return money; }
+	void set_money(int new_money) { money = new_money; }
+	void buy(item item_to_buy) { money -= item_to_buy.get_price(); }
 	friend std::ostream& operator<<(std::ostream& os, const customer& cu);
 };
+
+/*template <typename T>
+customer<T>::customer(std::string name, int age, T id, int money) : person(std::string name, int age, T id) {
+	this->money = money;
+	//this->age = age;
+	//this->id = id;
+	//this->name = name;
+}*/
 
 std::ostream& operator<<(std::ostream& os, const item& it)
 {
 	os << it.name << " товар " << it.price << " цена " << it.discount << " скидка " << it.total_items_count << " всего товаров\n";
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const shop& sh)
+{
+	os << sh.name << "\n";
+	for (int i = 0; i < sh.items_counter; i++) {os << sh.items[i] << "\n"; } //?
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const sale& sa)
+{
+	os << sa.text << "\n";
+	for (int i = 0; i < sa.items_counter; i++) { os << sa.items[i] << "\n"; } //?
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const expire& ex)
+{
+	os << ex.day << "/" << ex.month << "/" << ex.day << " " << ex.hour << ":" << ex.minute << ":" << ex.second;
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const promocode& pr)
+{
+	os << pr.code << "\n";
+	for (int i = 0; i < pr.items_counter; i++) { os << pr.items[i] << "\n"; } //?
+	os << pr.discount << "\n";
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const expiring_promocode& ex_pr)
+{
+	os << ex_pr.code << "\n";
+	for (int i = 0; i < ex_pr.items_counter; i++) { os << ex_pr.items[i] << "\n"; } //?
+	os << ex_pr.discount << "\n" << ex_pr.this_expire << "\n";
+	return os;
+}
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const customer<T>& cu)
+{
+	os << cu.name << " Имя " << cu.age << " Возраст " << cu.id << " ID " << cu.money << " Баланс\n";
 	return os;
 }
 
@@ -194,6 +247,7 @@ expiring_promocode expiring_promocode::operator=(promocode pr){
 	set_code(code_buffer);
 	set_discount(discount_buffer);
 	set_expire(expire()); //?
+	return *this;
 }
 
 void itemcpy(item destination, item source) {
@@ -478,12 +532,6 @@ promocode::promocode(item new_items[], int new_items_counter, std::string code, 
 		promocode::add_item(new_items[i]);
 	}
 	this->code = code;
-	//this_expire.set_day(new_expire.get_day());
-	//this_expire.set_month(new_expire.get_month());
-	//this_expire.set_year(new_expire.get_year());
-	//this_expire.set_second(new_expire.get_second());
-	//this_expire.set_minute(new_expire.get_minute());
-	//this_expire.set_hour(new_expire.get_hour());
 	discount = new_discount;
 }
 
@@ -519,30 +567,11 @@ int promocode::get_discount() {
 	return discount;
 }
 
-/*void promocode::get_expire(expire buffer) {
-	buffer.set_day(this_expire.get_day());
-	buffer.set_month(this_expire.get_month());
-	buffer.set_year(this_expire.get_year());
-	buffer.set_second(this_expire.get_second());
-	buffer.set_minute(this_expire.get_minute());
-	buffer.set_hour(this_expire.get_hour());
-}
-
-void promocode::set_expire(expire new_expire) {
-	this_expire.set_day(new_expire.get_day());
-	this_expire.set_month(new_expire.get_month());
-	this_expire.set_year(new_expire.get_year());
-	this_expire.set_second(new_expire.get_second());
-	this_expire.set_minute(new_expire.get_minute());
-	this_expire.set_hour(new_expire.get_hour());
-}*/
-
 void promocode::print() {
 	std::cout << this->code;
 	for (int i = 0; i < items_counter; i++) {
 		items[i].print();
 	}
-	//this_expire.print();
 	printf("Скидка %d", discount);
 }
 
@@ -604,4 +633,60 @@ void sale::print() {
 	for (int i = 0; i < items_counter; i++) {
 		items[i].print();
 	}
+}
+
+void expiring_promocode::set_expire(expire new_expire) {
+	this_expire.set_day(new_expire.get_day());
+	this_expire.set_month(new_expire.get_month());
+	this_expire.set_year(new_expire.get_year());
+	this_expire.set_second(new_expire.get_second());
+	this_expire.set_minute(new_expire.get_minute());
+	this_expire.set_hour(new_expire.get_hour());
+}
+
+expiring_promocode::expiring_promocode(item new_items[], int new_items_counter, std::string new_code, expire new_expire, int new_discount) {
+	this->items_counter = 0;
+	for (int i = 0; i < new_items_counter; i++) {
+		promocode::add_item(new_items[i]);
+	}
+	this->code = code;
+	this_expire.set_day(new_expire.get_day());
+	this_expire.set_month(new_expire.get_month());
+	this_expire.set_year(new_expire.get_year());
+	this_expire.set_second(new_expire.get_second());
+	this_expire.set_minute(new_expire.get_minute());
+	this_expire.set_hour(new_expire.get_hour());
+	discount = new_discount;
+}
+
+expiring_promocode::expiring_promocode(std::string new_code) {
+	items_counter = 0;
+	discount = 0;
+	this->code = code;
+	set_expire(expire());//?
+}
+
+expiring_promocode::expiring_promocode() {
+	items_counter = 0;
+	discount = 0;
+	code = "0";
+	set_expire(expire());//?
+}
+
+void expiring_promocode::get_expire(expire buffer) {
+	buffer.set_day(this_expire.get_day());
+	buffer.set_month(this_expire.get_month());
+	buffer.set_year(this_expire.get_year());
+	buffer.set_second(this_expire.get_second());
+	buffer.set_minute(this_expire.get_minute());
+	buffer.set_hour(this_expire.get_hour());
+}
+
+void expiring_promocode::print_s_vizovom() {
+	promocode::print();
+	std::cout << this_expire;
+}
+
+void expiring_promocode::print_bez_vizova() {
+	std::cout << *this;
 }

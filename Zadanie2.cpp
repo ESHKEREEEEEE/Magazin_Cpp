@@ -125,5 +125,8 @@ int main()
     }
     }
     catch (std::invalid_argument e) { std::cout << e.what();}
-    expiring_promocode()
+    expiring_promocode().print_s_vizovom();
+    expiring_promocode().print_bez_vizova();
+    customer<int> abobus("azazaz", 12, 228, 10);
+  
 }
