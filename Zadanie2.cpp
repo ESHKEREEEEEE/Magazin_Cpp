@@ -1,5 +1,7 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
+#include <vector>
+#include <algorithm>
 #include "NEW_BONUS.h"
 #define SHOP_COUNT 30
 #define SALE_COUNT 30
@@ -68,46 +70,46 @@ int main()
         new_expire.set_minute(14);
         new_expire.set_second(15);
         std::cout << new_expire;
-    
 
-    
 
-    //тест перегрузки операторов
-    shop shop_to_plus;
-    item first_item("bebra", 10, 1);
-    item second_item("svo", 11, 2);
-    shop first_shop("\nPudge", first_item);
-    shop second_shop("Rudge", second_item);
-    shop_to_plus = first_shop + second_shop;
-    std::cout << shop_to_plus;
-    std::cout << new_expire;
-    new_expire++;
-    std::cout << new_expire;
-    ++new_expire;
-    std::cout << new_expire;
-    //тест передачи параметров по ссылке и через указатель
-    printf("%d\n", *first_item.get_price_p());
-    printf("%d\n", first_item.get_price_s());
-    //двумерные массивы
-    item item1("Эщ", 1, 1);
-    item item2("ке", 2, 2);
-    item item3("ре", 3, 3);
-    item item4("0", 1, 1);
-    item itemarr[2][2];
-    itemarr[0][0] = item1;
-    itemarr[0][1] = item2;
-    itemarr[1][0] = item3;
-    itemarr[1][1] = item4;
-    for (int i = 0; i < 2; i++) {
-        for (int j = 0; j < 2; j++) {
-            try {
-                std::cout << itemarr[i][j];
+
+
+        //тест перегрузки операторов
+        shop shop_to_plus;
+        item first_item("bebra", 10, 1);
+        item second_item("svo", 11, 2);
+        shop first_shop("\nPudge", first_item);
+        shop second_shop("Rudge", second_item);
+        shop_to_plus = first_shop + second_shop;
+        std::cout << shop_to_plus;
+        std::cout << new_expire;
+        new_expire++;
+        std::cout << new_expire;
+        ++new_expire;
+        std::cout << new_expire;
+        //тест передачи параметров по ссылке и через указатель
+        printf("%d\n", *first_item.get_price_p());
+        printf("%d\n", first_item.get_price_s());
+        //двумерные массивы
+        item item1("Эщ", 1, 1);
+        item item2("ке", 2, 2);
+        item item3("ре", 3, 3);
+        item item4("0", 1, 1);
+        item itemarr[2][2];
+        itemarr[0][0] = item1;
+        itemarr[0][1] = item2;
+        itemarr[1][0] = item3;
+        itemarr[1][1] = item4;
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++) {
+                try {
+                    std::cout << itemarr[i][j];
+                }
+                catch (std::invalid_argument e) { std::cout << e.what(); }
             }
-            catch (std::invalid_argument e) { std::cout << e.what();}
         }
     }
-    }
-    catch (std::invalid_argument e) { std::cout << e.what();}
+    catch (std::invalid_argument e) { std::cout << e.what(); }
     //тест методов promocode
     promocode new_promocode;
     expire expire_buffer;
@@ -135,4 +137,29 @@ int main()
     std::cout << *abobus;
     abobus->buy(new_item);
     std::cout << *abobus;
+    //Контейнеры
+    item item1("ES", 1, 1);
+    item item2("KE", 2, 2);
+    item item3("RE", 3, 3);
+    item item4("0", 1, 1);
+    item items1[]{ item1 };
+    item items2[]{ item2 };
+    item items3[]{ item3 };
+    promocode promocode1("pudge");
+    promocode promocode2("techies");
+    promocode promocode4;
+    
+    expiring_promocode promocode3("sniper");
+    promocode4 = promocode3;
+    std::vector<promocode> v1{ promocode1, promocode2, promocode3 };
+    //поиск
+    std::vector<promocode>::iterator it;
+    it = std::find(v1.begin(), v1.end(), promocode2);
+    if (it == v1.end()) { std::cout << "not found"; }
+    else { std::cout << "found " << *it; }
+    //сортировка
+    std::vector<promocode>::iterator it1;
+    for (it1 = v1.begin(); it1 < v1.end(); it1++) {std::cout << *it1;}
+    std::sort(v1.begin(), v1.end());
+    for (it1 = v1.begin(); it1 < v1.end(); it1++) {std::cout << *it1;}
 }

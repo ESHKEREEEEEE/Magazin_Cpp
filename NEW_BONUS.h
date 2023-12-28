@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 #include <iostream>
 #include <string>
 #include <stdexcept>
@@ -95,13 +96,25 @@ public:
 	void get_items(item buffer[]);
 	void set_items(item items_to_set[]);
 	void add_item(item new_item);
+	void init_add_item(item new_item);
 	void delete_item(int item_number);
 	int get_discount();
 	void set_discount(int new_discount);
 	int get_items_counter();
 	void print() { std::cout << *this; }
+	bool operator==(const promocode& rhs)
+	{
+		if (this->code == rhs.code) { return true; }
+		else { return false; }
+	}
 	friend std::ostream& operator<<(std::ostream& os, const promocode& pr);
+	friend bool operator <(const promocode& lhs, const promocode& rhs);
 };
+
+bool operator <(const promocode& lhs, const promocode& rhs) {
+	if (lhs.discount != rhs.discount) { return lhs.discount < rhs.discount; }
+	if (lhs.code != rhs.code) { return lhs.code < rhs.code; }
+}
 
 class sale {
 	item items[SALE_ITEMS_COUNT];
@@ -121,10 +134,7 @@ public:
 };
 
 class expiring_promocode : public promocode {
-	item items[PROMOCODE_ITEM_SIZE];
-	std::string code;
-	int items_counter;
-	int discount;
+public:
 	expire this_expire;
 public:
 	expiring_promocode();
@@ -298,7 +308,7 @@ void item::get_name(std::string *buffer) {
 }
 
 void item::set_name(std::string name) {
-	if (this->name == "0" && name != "0") { total_items_count++; }
+	//if (this->name == "0" && name != "0") { total_items_count++; }
 	this->name = name;
 }
 
@@ -493,9 +503,17 @@ void promocode::add_item(item new_item) {
 	promocode::items_counter++;
 }
 
+void promocode::init_add_item(item new_item) {
+	std::string new_name;
+	new_item.get_name(&new_name);
+	promocode::items[promocode::items_counter].set_name(new_name);
+	promocode::items[promocode::items_counter].set_price(new_item.get_price());
+	promocode::items[promocode::items_counter].set_discount(new_item.get_discount());
+}
+
 promocode::promocode(item new_items[], int new_items_counter, std::string code, int new_discount) {
 	for (int i = 0; i < new_items_counter; i++) {
-		promocode::add_item(new_items[i]);
+		promocode::init_add_item(new_items[i]);
 	}
 	this->code = code;
 	discount = new_discount;
@@ -613,7 +631,7 @@ expiring_promocode::expiring_promocode(item new_items[], int new_items_counter, 
 expiring_promocode::expiring_promocode(std::string new_code) {
 	items_counter = 0;
 	discount = 0;
-	this->code = code;
+	this->code = new_code;
 	set_expire(expire());//?
 }
 
@@ -641,3 +659,4 @@ void expiring_promocode::print_s_vizovom() {
 void expiring_promocode::print_bez_vizova() {
 	std::cout << *this;
 }
+
