@@ -16,7 +16,7 @@ int main()
     //тест методов item
     std::string name_for_item = "name";
     item new_item(name_for_item, 100, 0);
-    new_item.print();
+    std::cout << new_item;
     std::string new_name = "new_name";
     new_item.set_name(new_name);
     new_item.set_price(228);
@@ -31,16 +31,16 @@ int main()
     std::string name_for_shop = "name";
     new_shop.add_item(new_item);
     new_shop.set_name(name_for_shop);
-    new_shop.print();
+    std::cout << new_shop;
     item items_buffer[ITEMS_COUNT];
     new_shop.get_items(items_buffer);
     for (int i = 0; i < new_shop.get_items_counter(); i++) {
-        items_buffer[i].print();
+        std::cout << items_buffer[i];
     }
     new_shop.delete_item(0);
     new_shop.get_name(&string_buffer);
     std::cout << string_buffer << "\n";
-    new_shop.print();
+    std::cout << new_shop;
 
     //тест методов sale
     std::string text_for_sale = "эх акция, акция\n";
@@ -50,12 +50,12 @@ int main()
     new_sale.add_item(new_item);
     new_sale.get_items(items_buffer);
     for (int i = 0; i < new_sale.get_items_counter(); i++) {
-        items_buffer[i].print();
+        std::cout << items_buffer[i];
     }
     string_buffer = "эщкере\n";
     new_sale.set_text(string_buffer);
     new_sale.delete_item(0);
-    new_sale.print();
+    std::cout << new_sale;
 
     //тест методов expire
     try {
@@ -67,27 +67,10 @@ int main()
         new_expire.set_hour(13);
         new_expire.set_minute(14);
         new_expire.set_second(15);
-        new_expire.print();
+        std::cout << new_expire;
     
 
-    //тест методов promocode
-    promocode new_promocode;
-    expire expire_buffer;
-    std::string code_for_promocode = "mishkafreddy\n";
-    new_promocode.set_code(code_for_promocode);
-    new_promocode.get_code(&string_buffer);
-    std::cout << string_buffer;
-    new_promocode.add_item(new_item);
-    new_promocode.get_items(items_buffer);
-    for (int i = 0; i < new_promocode.get_items_counter(); i++) {
-        items_buffer[i].print();
-    }
-    new_promocode.set_discount(10);
-    printf("%d\n", new_promocode.get_discount());
-    //new_promocode.set_expire(new_expire);
-    //new_promocode.get_expire(expire_buffer);
-    new_promocode.delete_item(0);
-    new_promocode.print();
+    
 
     //тест перегрузки операторов
     shop shop_to_plus;
@@ -96,12 +79,12 @@ int main()
     shop first_shop("\nPudge", first_item);
     shop second_shop("Rudge", second_item);
     shop_to_plus = first_shop + second_shop;
-    shop_to_plus.print();
-    new_expire.print();
+    std::cout << shop_to_plus;
+    std::cout << new_expire;
     new_expire++;
-    new_expire.print();
+    std::cout << new_expire;
     ++new_expire;
-    new_expire.print();
+    std::cout << new_expire;
     //тест передачи параметров по ссылке и через указатель
     printf("%d\n", *first_item.get_price_p());
     printf("%d\n", first_item.get_price_s());
@@ -118,15 +101,38 @@ int main()
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
             try {
-                itemarr[i][j].print();
+                std::cout << itemarr[i][j];
             }
             catch (std::invalid_argument e) { std::cout << e.what();}
         }
     }
     }
     catch (std::invalid_argument e) { std::cout << e.what();}
+    //тест методов promocode
+    promocode new_promocode;
+    expire expire_buffer;
+    std::string code_for_promocode = "mishkafreddy\n";
+    new_promocode.set_code(code_for_promocode);
+    new_promocode.get_code(&string_buffer);
+    std::cout << string_buffer;
+    new_promocode.add_item(new_item);
+    new_promocode.get_items(items_buffer);
+    for (int i = 0; i < new_promocode.get_items_counter(); i++) {
+        std::cout << items_buffer[i];
+    }
+    new_promocode.set_discount(10);
+    printf("%d\n", new_promocode.get_discount());
+    //Выполнить перегрузку оператора присваивания объекту производного класса объектов базового класса
+    std::cout << new_promocode;
+    expiring_promocode ex_pr1("hhh");
+    ex_pr1 = new_promocode;
+    std::cout << ex_pr1;
+    // Продемонстрировать перегрузку метода базового класса в производном классе (с вызовом метода базового класса и без такого вызова)
     expiring_promocode().print_s_vizovom();
     expiring_promocode().print_bez_vizova();
-    customer<int> abobus("azazaz", 12, 228, 10);
-  
+    //Продемонстрировать в конструкторе производного класса с параметрами вызов конструктора базового класса
+    customer<int>* abobus = new customer<int>("azazaz", 12, 228, 10); //abobus("azazaz", 12, 228, 10);
+    std::cout << *abobus;
+    abobus->buy(new_item);
+    std::cout << *abobus;
 }

@@ -9,7 +9,6 @@
 #define SALE_ITEMS_COUNT 30
 #define SALE_TEXT_LENGTH 100
 #define PROMOCODE_ITEM_SIZE 30
-#define generic <typename T>
 
 class item {
 	static int total_items_count;
@@ -28,7 +27,6 @@ public:
 	void set_price(int new_price);
 	int get_discount();
 	void set_discount(int new_discount);
-	void print();
 	friend std::ostream& operator<<(std::ostream& os, const item& it);
 protected:
 	int price = 0;
@@ -50,7 +48,6 @@ public:
 	void add_item(item new_item);
 	void delete_item(int item_number);
 	int get_items_counter();
-	void print();
 	shop operator+ (shop& other);
 	friend std::ostream& operator<<(std::ostream& os, const shop& sh);
 };
@@ -78,14 +75,14 @@ public:
 	void set_second(int new_second);
 	void set_minute(int new_minute);
 	void set_hour(int new_hour);
-	void print();
 	expire& operator++();
 	expire operator++(int);
 	friend std::ostream& operator<<(std::ostream& os, const expire& ex);
 };
 
 class promocode {
-	item items[PROMOCODE_ITEM_SIZE];
+public:
+    item items[PROMOCODE_ITEM_SIZE];
 	std::string code;
 	int items_counter;
 	int discount;
@@ -102,7 +99,7 @@ public:
 	int get_discount();
 	void set_discount(int new_discount);
 	int get_items_counter();
-	void print();
+	void print() { std::cout << *this; }
 	friend std::ostream& operator<<(std::ostream& os, const promocode& pr);
 };
 
@@ -120,7 +117,6 @@ public:
 	void add_item(item new_item);
 	void delete_item(int item_number);
 	int get_items_counter();
-	void print();
 	friend std::ostream& operator<<(std::ostream& os, const sale& sa);
 };
 
@@ -138,18 +134,25 @@ public:
 	void set_expire(expire new_expire);
 	void print_s_vizovom();
 	void print_bez_vizova();
-	expiring_promocode operator=(promocode pr);
+	expiring_promocode& operator=(const promocode& pr) {
+		this->code = pr.code;
+		//this->set_items(pr.items);
+		this->items_counter = pr.items_counter;
+		this->discount = pr.discount;
+		this->set_expire(expire());
+		return *this;
+	};
 	friend std::ostream& operator<<(std::ostream& os, const expiring_promocode& ex_pr);
 };
 
 template <typename T>
 class person {
+public:
 	std::string name;
 	int age;
 	T id;
-public:
 	person(std::string name, int age, T id);
-	void get_name(std::string name_buffer) { name_buffer = name; }
+	void get_name(std::string *name_buffer) { *name_buffer = name; }
 	void set_name(std::string new_name) { name = new_name; }
 	int get_age() { return age; }
 	void set_age(int new_age) { age = new_age; }
@@ -159,31 +162,31 @@ public:
 };
 
 template <typename T>
-person<T>::person(std::string name, int age, T id) {
-	this->name = name; this->age = age; this->id = id;
+person<T>::person(std::string new_name, int new_age, T new_id) {
+	name = new_name; 
+	age = new_age; 
+	id = new_id;
 }
 
 template <typename T>
 class customer : public person<T> {
-	std::string name;
-	int age;
-	T id;
 	int money;
 public:
-	customer(std::string name, int age, T id, int money) : person(name, age, id) { this->money = money; };
+	template <typename T>
+	customer(std::string name, int age, T id, int money)
+		: person<T>(name, age, id), money(money) {}
 	int get_money() { return money; }
 	void set_money(int new_money) { money = new_money; }
-	void buy(item item_to_buy) { money -= item_to_buy.get_price(); }
-	friend std::ostream& operator<<(std::ostream& os, const customer& cu);
+	void buy(item item_to_buy) override { money -= item_to_buy.get_price(); }
+	friend std::ostream& operator<<(std::ostream& os, const customer<T>& cu) 
+	{
+		os << cu.name << " Имя " << cu.age << " Возраст " << cu.age << " ID " << cu.money << " Баланс\n";
+		return os;
+	};
 };
 
-/*template <typename T>
-customer<T>::customer(std::string name, int age, T id, int money) : person(std::string name, int age, T id) {
-	this->money = money;
-	//this->age = age;
-	//this->id = id;
-	//this->name = name;
-}*/
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const customer<T>& cu) {}
 
 std::ostream& operator<<(std::ostream& os, const item& it)
 {
@@ -227,28 +230,7 @@ std::ostream& operator<<(std::ostream& os, const expiring_promocode& ex_pr)
 	return os;
 }
 
-template <typename T>
-std::ostream& operator<<(std::ostream& os, const customer<T>& cu)
-{
-	os << cu.name << " Имя " << cu.age << " Возраст " << cu.id << " ID " << cu.money << " Баланс\n";
-	return os;
-}
 
-expiring_promocode expiring_promocode::operator=(promocode pr){
-	item items_buffer[SHOP_ITEMS_COUNT];
-	std::string code_buffer;
-	int items_counter_buffer;
-	int discount_buffer;
-	pr.get_items(items_buffer);
-	pr.get_code(&code_buffer);
-	items_counter_buffer = pr.get_items_counter(); //возможно убрать
-	discount_buffer = pr.get_discount();
-	set_items(items_buffer);
-	set_code(code_buffer);
-	set_discount(discount_buffer);
-	set_expire(expire()); //?
-	return *this;
-}
 
 void itemcpy(item destination, item source) {
 	std::string source_name;
@@ -345,11 +327,6 @@ void item::set_discount(int new_discount) {
 	item::discount = new_discount;
 }
 
-void item::print() {
-	if (this->name != "0") { std::cout << item::name << " товар " << item::price << " цена " << item::discount << " скидка " << item::total_items_count << " всего товаров\n"; }
-	else if (this->price != 0 and this->discount != 0) throw std::invalid_argument("NO ITEM NAME BUT PRICE AND DISCOUNT != 0");
-}
-
 shop::shop() {
 	this->name = "0";
 	items_counter = 0;
@@ -399,13 +376,6 @@ void shop::delete_item(int item_number) {
 
 int shop::get_items_counter() {
 	return items_counter;
-}
-
-void shop::print() {
-	std::cout << this->name << "\n";
-	for (int i = 0; i < items_counter; i++) {
-		shop::items[i].print();
-	}
 }
 
 expire::expire() {
@@ -494,10 +464,6 @@ void expire::set_hour(int new_hour) {
 	if (hour < 0 or hour > 59) { throw std::invalid_argument("Second needs to be less than 59 and more than 0"); }
 }
 
-void expire::print() {
-	printf("%d/%d/%d %d:%d:%d\n", day, month, year, hour, minute, second);
-}
-
 void promocode::set_discount(int new_discount) {
 	promocode::discount = new_discount;
 }
@@ -567,14 +533,6 @@ int promocode::get_discount() {
 	return discount;
 }
 
-void promocode::print() {
-	std::cout << this->code;
-	for (int i = 0; i < items_counter; i++) {
-		items[i].print();
-	}
-	printf("Скидка %d", discount);
-}
-
 void sale::add_item(item new_item) {
 	std::string new_name;
 	new_item.get_name(&new_name);
@@ -628,13 +586,6 @@ int sale::get_items_counter() {
 	return items_counter;
 }
 
-void sale::print() {
-	std::cout << text;
-	for (int i = 0; i < items_counter; i++) {
-		items[i].print();
-	}
-}
-
 void expiring_promocode::set_expire(expire new_expire) {
 	this_expire.set_day(new_expire.get_day());
 	this_expire.set_month(new_expire.get_month());
@@ -670,7 +621,7 @@ expiring_promocode::expiring_promocode() {
 	items_counter = 0;
 	discount = 0;
 	code = "0";
-	set_expire(expire());//?
+	set_expire(expire());
 }
 
 void expiring_promocode::get_expire(expire buffer) {
